@@ -263,6 +263,71 @@ h1 {
 
 .answer-options { display: grid; gap: 8px; }
 
+.answer-choice { display: grid; }
+
+.tip-details {
+  margin: 2px 0 4px;
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.84rem;
+}
+
+.tip-details summary {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  padding: 0 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.tip-details[open] {
+  border-radius: 12px;
+  background: var(--green-soft);
+  padding-bottom: 8px;
+}
+
+.tip-copy {
+  margin: 0;
+  padding: 2px 14px 6px;
+  line-height: 1.55;
+}
+
+.tip-details a {
+  display: inline-block;
+  margin: 2px 14px 6px;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.bottom-section {
+  max-width: 680px;
+  margin: 28px auto 0;
+  border-top: 1px solid var(--line);
+  padding: 20px 8px 8px;
+}
+
+.bottom-section h2 {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bottom-section-rows {
+  display: grid;
+  gap: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 0.85rem;
+}
+
+.bottom-section-rows p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .answer-option {
   display: flex;
   min-height: 56px;

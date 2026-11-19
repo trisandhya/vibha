@@ -43,6 +43,12 @@ node scripts/translation-workbook.js --validate
 
 The script uses no external translation service. Review translations with fluent speakers before treating them as final.
 
+## Questionnaire tips and bottom text
+
+Edit `data/questionnaires/awareness.json` to add or change questions and choices. Each question and choice needs a `tip`: use a `verse` with exactly two `lines`, or a `link` with an HTTP(S) `url` and a `label`. The questionnaire page shows each tip in an expandable section.
+
+The same file has a `bottomSection.rows` array for additional page text. It accepts up to two short text rows.
+
 ## Structure
 
 ```text

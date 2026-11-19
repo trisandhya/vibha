@@ -79,6 +79,7 @@
     const response = await fetch("data/questionnaires/awareness.json");
     if (!response.ok) throw new Error("Unable to load the questionnaire");
     questionnaire = await response.json();
+    validateQuestionnaire(questionnaire);
 
     renderHome();
   }
@@ -91,6 +92,79 @@
       '"': "&quot;",
       "'": "&#039;"
     })[character]);
+  }
+
+  function validateTip(tip, location) {
+    if (!tip || !["verse", "link"].includes(tip.type)) {
+      throw new Error(`Missing or unsupported tip at ${location}`);
+    }
+
+    if (tip.type === "verse") {
+      if (
+        !Array.isArray(tip.lines) ||
+        tip.lines.length !== 2 ||
+        tip.lines.some((line) => typeof line !== "string" || !line.trim())
+      ) {
+        throw new Error(`A verse tip must have two non-empty lines at ${location}`);
+      }
+      return;
+    }
+
+    let url;
+    try {
+      url = new URL(tip.url);
+    } catch (error) {
+      throw new Error(`Invalid link tip at ${location}`);
+    }
+    if (!["http:", "https:"].includes(url.protocol) || !tip.label) {
+      throw new Error(`Invalid link tip at ${location}`);
+    }
+  }
+
+  function validateQuestionnaire(data) {
+    if (!Array.isArray(data.questions) || !Array.isArray(data.options)) {
+      throw new Error("Questionnaire must include questions and options");
+    }
+    data.questions.forEach((question, index) => {
+      validateTip(question.tip, `question ${index + 1}`);
+    });
+    data.options.forEach((option, index) => {
+      validateTip(option.tip, `option ${index + 1}`);
+    });
+    if (
+      !data.bottomSection ||
+      !Array.isArray(data.bottomSection.rows) ||
+      data.bottomSection.rows.length > 2
+    ) {
+      throw new Error("Questionnaire bottom section must have at most two text rows");
+    }
+  }
+
+  function renderTip(tip) {
+    const body = tip.type === "verse"
+      ? `<p class="tip-copy">${tip.lines.map(escapeHtml).join("<br>")}</p>`
+      : `<a href="${escapeHtml(tip.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(tip.label)}</a>`;
+
+    return `
+      <details class="tip-details">
+        <summary>${escapeHtml(i18n.t("tipLabel"))}</summary>
+        ${body}
+      </details>
+    `;
+  }
+
+  function renderBottomSection() {
+    const section = questionnaire.bottomSection;
+    if (!section.rows.length) return "";
+
+    return `
+      <aside class="bottom-section">
+        <h2>${escapeHtml(i18n.t(section.titleKey))}</h2>
+        <div class="bottom-section-rows">
+          ${section.rows.map((row) => `<p>${escapeHtml(row)}</p>`).join("")}
+        </div>
+      </aside>
+    `;
   }
 
   function renderHome() {
@@ -129,11 +203,13 @@
         <p class="privacy-note" id="home-privacy">${escapeHtml(i18n.t("privacy"))}</p>
       </section>
     `;
-    const preview = document.querySelector(".hero-language-preview");
-    preview.addEventListener("pointerenter", stopLanguageCycle);
-    preview.addEventListener("focus", stopLanguageCycle);
-    preview.addEventListener("pointerleave", startLanguageCycle);
-    preview.addEventListener("blur", startLanguageCycle);
+    const hero = document.querySelector(".hero");
+    hero.addEventListener("pointerenter", stopLanguageCycle);
+    hero.addEventListener("pointerleave", startLanguageCycle);
+    hero.addEventListener("focusin", stopLanguageCycle);
+    hero.addEventListener("focusout", (event) => {
+      if (!hero.contains(event.relatedTarget)) startLanguageCycle();
+    });
     startLanguageCycle();
   }
 
@@ -177,16 +253,21 @@
           ${i18n.isDraft() ? `<p class="translation-note">${escapeHtml(i18n.t("translationReviewNotice"))}</p>` : ""}
           <p class="question-number">${escapeHtml(i18n.t("question"))} ${questionIndex + 1} / ${questionnaire.questions.length}</p>
           <h2>${escapeHtml(i18n.t(question.prompt))}</h2>
+          ${renderTip(question.tip)}
           <div class="answer-options">
             ${questionnaire.options.map((option, index) => `
-              <button class="answer-option" type="button" data-answer="${option.value}" data-dimension="${question.dimension}">
-                <span class="number">${index + 1}</span>
-                <span>${escapeHtml(i18n.t(option.label))}</span>
-              </button>
+              <div class="answer-choice">
+                <button class="answer-option" type="button" data-answer="${option.value}" data-dimension="${question.dimension}">
+                  <span class="number">${index + 1}</span>
+                  <span>${escapeHtml(i18n.t(option.label))}</span>
+                </button>
+                ${renderTip(option.tip)}
+              </div>
             `).join("")}
           </div>
         </article>
         ${questionIndex > 0 ? `<div class="button-row"><button class="secondary-button" type="button" data-action="back">${escapeHtml(i18n.t("back"))}</button></div>` : ""}
+        ${renderBottomSection()}
       </section>
     `;
   }

@@ -9,18 +9,135 @@
     "learning"
   ],
   "questions": [
-    { "dimension": "awareness", "prompt": "qAwareness" },
-    { "dimension": "focus", "prompt": "qFocus" },
-    { "dimension": "health", "prompt": "qHealth" },
-    { "dimension": "finance", "prompt": "qFinance" },
-    { "dimension": "relationships", "prompt": "qRelationships" },
-    { "dimension": "learning", "prompt": "qLearning" }
+    {
+      "dimension": "awareness",
+      "prompt": "qAwareness",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Pause and notice what matters today.",
+          "Small truths can gently light the way."
+        ]
+      }
+    },
+    {
+      "dimension": "focus",
+      "prompt": "qFocus",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Choose one task and give it room.",
+          "Steady steps help purpose bloom."
+        ]
+      }
+    },
+    {
+      "dimension": "health",
+      "prompt": "qHealth",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Rest and care belong in the climb.",
+          "Small choices build strength over time."
+        ]
+      }
+    },
+    {
+      "dimension": "finance",
+      "prompt": "qFinance",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Look at what is, without blame.",
+          "One clear step can ease the strain."
+        ]
+      }
+    },
+    {
+      "dimension": "relationships",
+      "prompt": "qRelationships",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Recall the people who walk beside you.",
+          "A kind word can strengthen what is true."
+        ]
+      }
+    },
+    {
+      "dimension": "learning",
+      "prompt": "qLearning",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Stay curious; begin anew.",
+          "Each small lesson grows with you."
+        ]
+      }
+    }
   ],
   "options": [
-    { "value": 1, "label": "answer1" },
-    { "value": 2, "label": "answer2" },
-    { "value": 3, "label": "answer3" },
-    { "value": 4, "label": "answer4" },
-    { "value": 5, "label": "answer5" }
-  ]
+    {
+      "value": 1,
+      "label": "answer1",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "If things feel unclear today,",
+          "Start with what you notice on the way."
+        ]
+      }
+    },
+    {
+      "value": 2,
+      "label": "answer2",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "A little is a place to start;",
+          "Small steps can grow with care and heart."
+        ]
+      }
+    },
+    {
+      "value": 3,
+      "label": "answer3",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Some parts are coming into view;",
+          "Give yourself time to follow through."
+        ]
+      }
+    },
+    {
+      "value": 4,
+      "label": "answer4",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Most days show a steady way;",
+          "Notice what helps you stay."
+        ]
+      }
+    },
+    {
+      "value": 5,
+      "label": "answer5",
+      "tip": {
+        "type": "verse",
+        "lines": [
+          "Clarity can be a strength you keep;",
+          "Carry that insight as you leap."
+        ]
+      }
+    }
+  ],
+  "bottomSection": {
+    "titleKey": "bottomSectionTitle",
+    "rows": [
+      "This is a reflection, not a score.",
+      "Your answers can change over time."
+    ]
+  }
 }
