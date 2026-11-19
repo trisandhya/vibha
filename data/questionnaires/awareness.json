@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "dimensions": [
+    "awareness",
+    "focus",
+    "health",
+    "finance",
+    "relationships",
+    "learning"
+  ],
+  "questions": [
+    { "dimension": "awareness", "prompt": "qAwareness" },
+    { "dimension": "focus", "prompt": "qFocus" },
+    { "dimension": "health", "prompt": "qHealth" },
+    { "dimension": "finance", "prompt": "qFinance" },
+    { "dimension": "relationships", "prompt": "qRelationships" },
+    { "dimension": "learning", "prompt": "qLearning" }
+  ],
+  "options": [
+    { "value": 1, "label": "answer1" },
+    { "value": 2, "label": "answer2" },
+    { "value": 3, "label": "answer3" },
+    { "value": 4, "label": "answer4" },
+    { "value": 5, "label": "answer5" }
+  ]
+}
