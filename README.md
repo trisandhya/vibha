@@ -31,7 +31,7 @@ VIBHA stores the latest reflection and selected language only in browser `localS
 
 ## Questionnaire translations
 
-The questionnaire and choices are translated locally for the 22 languages listed in India's Eighth Schedule. Translations beyond Hindi and Telugu are drafts and are flagged for native-speaker review in the app. Untranslated interface labels fall back to English.
+The home-page introduction rotates through the available languages once per second; select the displayed introduction to make that language active. The questionnaire and choices are translated locally for the 22 languages listed in India's Eighth Schedule. Translations beyond Hindi and Telugu are drafts and are flagged for native-speaker review in the app. Untranslated interface labels fall back to English.
 
 Use the local translation workbook script to export, edit, import, or validate questionnaire translations:
 

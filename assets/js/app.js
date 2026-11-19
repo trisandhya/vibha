@@ -10,6 +10,66 @@
   let screen = "home";
   let questionIndex = 0;
   let answers = [];
+  let languageCycleTimer = null;
+  let languageCycleLanguages = [];
+  let languageCycleIndex = 0;
+  let homeLanguageLocked = false;
+  let homePreviewLanguageCode = "en";
+
+  function stopLanguageCycle() {
+    if (languageCycleTimer !== null) {
+      window.clearInterval(languageCycleTimer);
+      languageCycleTimer = null;
+    }
+  }
+
+  function startLanguageCycle() {
+    const preview = document.querySelector(".hero-language-preview");
+    if (
+      !preview ||
+      homeLanguageLocked ||
+      languageCycleTimer !== null ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) return;
+
+    languageCycleTimer = window.setInterval(() => {
+      languageCycleIndex = (languageCycleIndex + 1) % languageCycleLanguages.length;
+      const current = languageCycleLanguages[languageCycleIndex];
+      homePreviewLanguageCode = current.code;
+      updateHomePreview(current).catch((error) => {
+        stopLanguageCycle();
+        console.error("Unable to load rotating home-page text", error);
+      });
+    }, 1000);
+  }
+
+  async function updateHomePreview(language) {
+    const keys = ["eyebrow", "headline", "tagline", "start", "privacy"];
+    const values = await Promise.all(keys.map((key) => i18n.translateFor(language.code, key)));
+    if (
+      screen !== "home" ||
+      homeLanguageLocked ||
+      homePreviewLanguageCode !== language.code
+    ) return;
+
+    const preview = document.querySelector(".hero-language-preview");
+    if (!preview) return;
+    preview.dataset.language = language.code;
+    preview.setAttribute("aria-label", `Select this language: ${language.name}`);
+    preview.lang = language.code;
+    preview.dir = ["ks", "sd", "ur"].includes(language.code) ? "rtl" : "ltr";
+    document.getElementById("home-eyebrow").textContent = values[0];
+    document.getElementById("home-headline").textContent = values[1];
+    document.getElementById("home-tagline").textContent = values[2];
+    document.getElementById("home-start").textContent = values[3];
+    document.getElementById("home-privacy").textContent = values[4];
+    document.getElementById("home-start").lang = language.code;
+    document.getElementById("home-privacy").lang = language.code;
+    document.getElementById("home-draft-status").hidden = !language.draft;
+    preview.classList.remove("hero-language-preview--enter");
+    void preview.offsetWidth;
+    preview.classList.add("hero-language-preview--enter");
+  }
 
   async function initialize() {
     const savedLanguage = storage.getLanguage();
@@ -34,21 +94,51 @@
   }
 
   function renderHome() {
+    stopLanguageCycle();
     screen = "home";
+    languageCycleLanguages = [
+      { code: "en", native: "English", name: "English", draft: false },
+      ...i18n.getLanguages()
+    ];
+    languageCycleIndex = languageCycleLanguages
+      .findIndex((entry) => entry.code === i18n.getLanguage());
+    if (languageCycleIndex < 0) languageCycleIndex = 0;
+    const currentLanguage = languageCycleLanguages[languageCycleIndex];
+    homePreviewLanguageCode = currentLanguage.code;
+
     app.innerHTML = `
       <section class="screen hero">
-        <p class="eyebrow">${escapeHtml(i18n.t("eyebrow"))}</p>
-        <h1>${escapeHtml(i18n.t("headline"))}</h1>
-        <p class="hero-copy">${escapeHtml(i18n.t("tagline"))}</p>
-        <div class="button-row">
-          <button class="primary-button" type="button" data-action="start">${escapeHtml(i18n.t("start"))}</button>
+        <div
+          class="hero-language-preview"
+          role="button"
+          tabindex="0"
+          data-action="select-home-language"
+          data-language="${currentLanguage.code}"
+          aria-label="Select this language: ${escapeHtml(currentLanguage.name)}"
+          lang="${currentLanguage.code}"
+          dir="${["ks", "sd", "ur"].includes(currentLanguage.code) ? "rtl" : "ltr"}"
+        >
+          <p class="eyebrow" id="home-eyebrow">${escapeHtml(i18n.t("eyebrow"))}</p>
+          <h1 id="home-headline">${escapeHtml(i18n.t("headline"))}</h1>
+          <p class="hero-copy" id="home-tagline">${escapeHtml(i18n.t("tagline"))}</p>
+          <span class="home-draft-status" id="home-draft-status" ${currentLanguage.draft ? "" : "hidden"}>Draft translation · native-speaker review needed</span>
         </div>
-        <p class="privacy-note">${escapeHtml(i18n.t("privacy"))}</p>
+        <div class="button-row">
+          <button class="primary-button" id="home-start" type="button" data-action="start">${escapeHtml(i18n.t("start"))}</button>
+        </div>
+        <p class="privacy-note" id="home-privacy">${escapeHtml(i18n.t("privacy"))}</p>
       </section>
     `;
+    const preview = document.querySelector(".hero-language-preview");
+    preview.addEventListener("pointerenter", stopLanguageCycle);
+    preview.addEventListener("focus", stopLanguageCycle);
+    preview.addEventListener("pointerleave", startLanguageCycle);
+    preview.addEventListener("blur", startLanguageCycle);
+    startLanguageCycle();
   }
 
   function renderLanguages() {
+    stopLanguageCycle();
     screen = "languages";
     const languages = [
       { code: "en", name: "English", native: "English", draft: false },
@@ -73,6 +163,7 @@
   }
 
   function renderQuestion() {
+    stopLanguageCycle();
     screen = "question";
     const question = questionnaire.questions[questionIndex];
     const progress = ((questionIndex + 1) / questionnaire.questions.length) * 100;
@@ -112,6 +203,7 @@
   }
 
   function renderReflection() {
+    stopLanguageCycle();
     screen = "reflection";
     const scores = analyzer.analyze(answers, questionnaire.dimensions);
     const reflection = createReflection(scores);
@@ -171,10 +263,23 @@
     renderQuestion();
   }
 
+  async function selectHomeLanguage(code) {
+    stopLanguageCycle();
+    await i18n.load(code);
+    languageButton.textContent = code.toUpperCase();
+    homeLanguageLocked = true;
+    renderHome();
+  }
+
   app.addEventListener("click", async (event) => {
     const action = event.target.closest("[data-action]");
     const language = event.target.closest("[data-language]");
     const answer = event.target.closest("[data-answer]");
+
+    if (action && action.dataset.action === "select-home-language") {
+      await selectHomeLanguage(action.dataset.language);
+      return;
+    }
 
     if (language) {
       await selectLanguage(language.dataset.language);
@@ -202,8 +307,18 @@
       case "home":
         renderHome();
         break;
-      case "start":
+      case "languages":
         renderLanguages();
+        break;
+      case "start":
+        if (screen === "home" && homePreviewLanguageCode !== i18n.getLanguage()) {
+          await i18n.load(homePreviewLanguageCode);
+          languageButton.textContent = homePreviewLanguageCode.toUpperCase();
+        }
+        homeLanguageLocked = true;
+        questionIndex = 0;
+        answers = [];
+        renderQuestion();
         break;
       case "back":
         if (questionIndex > 0) {
@@ -234,6 +349,14 @@
           </section>
         `;
         break;
+    }
+  });
+
+  app.addEventListener("keydown", (event) => {
+    const preview = event.target.closest(".hero-language-preview");
+    if (preview && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      selectHomeLanguage(preview.dataset.language);
     }
   });
 

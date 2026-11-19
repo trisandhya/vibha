@@ -151,7 +151,10 @@ function importCsv(filename) {
       translationKeys.forEach((key) => { current[key] = translations[language.code][key]; });
       fs.writeFileSync(filenameForLanguage, `${JSON.stringify(current, null, 2)}\n`, "utf8");
     } else {
-      drafts[language.code] = translations[language.code];
+      drafts[language.code] = drafts[language.code] || {};
+      translationKeys.forEach((key) => {
+        drafts[language.code][key] = translations[language.code][key];
+      });
     }
   });
   fs.writeFileSync(path.join(localeDir, "drafts.json"), `${JSON.stringify(drafts, null, 2)}\n`, "utf8");
