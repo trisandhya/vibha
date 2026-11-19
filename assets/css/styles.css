@@ -152,6 +152,7 @@ h1 {
   max-width: 640px;
   margin: 32px auto 0;
   gap: 12px;
+  padding-bottom: 24px;
 }
 
 .language-card {
@@ -167,6 +168,17 @@ h1 {
 
 .language-card strong { display: block; font-size: 1.15rem; }
 .language-card span { color: var(--muted); font-family: Arial, sans-serif; }
+
+.translation-note {
+  margin: 0 0 18px;
+  border-left: 3px solid var(--gold);
+  padding: 8px 12px;
+  color: #67501e;
+  background: #faf2dd;
+  font-family: Arial, sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
 
 .question-card, .reflection-card, .notice-card {
   max-width: 680px;

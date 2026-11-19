@@ -50,15 +50,23 @@
 
   function renderLanguages() {
     screen = "languages";
+    const languages = [
+      { code: "en", name: "English", native: "English", draft: false },
+      ...i18n.getLanguages()
+    ];
+
     app.innerHTML = `
       <section class="screen">
         <p class="eyebrow">VIBHA</p>
         <h1>${escapeHtml(i18n.t("chooseLanguage"))}</h1>
         <p class="hero-copy">${escapeHtml(i18n.t("languageNote"))}</p>
         <div class="language-grid">
-          <button class="language-card" type="button" data-language="en"><strong>English</strong><span>English</span></button>
-          <button class="language-card" type="button" data-language="te"><strong>తెలుగు</strong><span>Telugu</span></button>
-          <button class="language-card" type="button" data-language="hi"><strong>हिन्दी</strong><span>Hindi</span></button>
+          ${languages.map((entry) => `
+            <button class="language-card" type="button" data-language="${entry.code}">
+              <strong>${escapeHtml(entry.native)}</strong>
+              <span>${escapeHtml(entry.name)}${entry.draft ? ` · ${escapeHtml(i18n.t("translationDraft"))}` : ""}</span>
+            </button>
+          `).join("")}
         </div>
       </section>
     `;
@@ -75,6 +83,7 @@
           <span style="width:${progress}%"></span>
         </div>
         <article class="question-card">
+          ${i18n.isDraft() ? `<p class="translation-note">${escapeHtml(i18n.t("translationReviewNotice"))}</p>` : ""}
           <p class="question-number">${escapeHtml(i18n.t("question"))} ${questionIndex + 1} / ${questionnaire.questions.length}</p>
           <h2>${escapeHtml(i18n.t(question.prompt))}</h2>
           <div class="answer-options">
@@ -121,6 +130,7 @@
       <section class="screen">
         <p class="eyebrow">VIBHA</p>
         <article class="reflection-card">
+          ${i18n.isDraft() ? `<p class="translation-note">${escapeHtml(i18n.t("translationReviewNotice"))}</p>` : ""}
           <h1 style="font-size:clamp(2rem,9vw,3.8rem);text-align:left">${escapeHtml(i18n.t("reflection"))}</h1>
           <p>${escapeHtml(i18n.t("reflectionLead"))}</p>
           <div class="results-grid">

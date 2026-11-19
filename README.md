@@ -29,6 +29,20 @@ This project uses plain HTML, CSS, and vanilla JavaScript. No build step is requ
 
 VIBHA stores the latest reflection and selected language only in browser `localStorage`. It has no account, backend, analytics, or tracking.
 
+## Questionnaire translations
+
+The questionnaire and choices are translated locally for the 22 languages listed in India's Eighth Schedule. Translations beyond Hindi and Telugu are drafts and are flagged for native-speaker review in the app. Untranslated interface labels fall back to English.
+
+Use the local translation workbook script to export, edit, import, or validate questionnaire translations:
+
+```powershell
+node scripts/translation-workbook.js --export translations.csv
+node scripts/translation-workbook.js --import translations.csv
+node scripts/translation-workbook.js --validate
+```
+
+The script uses no external translation service. Review translations with fluent speakers before treating them as final.
+
 ## Structure
 
 ```text
@@ -39,5 +53,6 @@ assets/
 data/
   questionnaires/
 locales/
+scripts/
 docs/
 ```

@@ -34,5 +34,7 @@
   "discard": "Discard saved reflection",
   "discarded": "Your saved reflection has been discarded.",
   "eyebrow": "Awareness before organization",
-  "headline": "Understand your own path."
+  "headline": "Understand your own path.",
+  "translationDraft": "draft",
+  "translationReviewNotice": "Draft translation — please ask a fluent speaker to review it."
 }
